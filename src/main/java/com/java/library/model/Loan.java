@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Entity
 @Data
+@Table(name = "loans")
 public class Loan {
 
     @Id
@@ -22,4 +23,7 @@ public class Loan {
 
     private LocalDate loanDate;
     private LocalDate returnDate;
+
+    @Enumerated(EnumType.STRING)
+    private LoanStatus status;
 }
