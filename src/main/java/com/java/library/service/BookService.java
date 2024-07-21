@@ -13,6 +13,7 @@ import java.util.Optional;
 @Service
 public class BookService {
 
+    private static final String BOOK_NOT_FOUND = "Book not found with id: ";
     @Autowired
     private BookRepository bookRepository;
 
@@ -44,11 +45,11 @@ public class BookService {
             book.setAvailability(updatedBook.getAvailability());
 
             return bookRepository.save(book);
-        }).orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
+        }).orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND + id));
     }
 
     public void deleteBook(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND + id));
         bookRepository.delete(book);
     }
 }
