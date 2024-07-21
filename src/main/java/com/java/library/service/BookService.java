@@ -1,48 +1,54 @@
 package com.java.library.service;
 
+import com.java.library.exception.BookNotFoundException;
 import com.java.library.model.Book;
 import com.java.library.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
-//
-//    public List<BookDTO> getAllBooks() {
-//        return bookRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
-//    }
-//
-//    public List<BookDTO> searchBooksByTitle(String title) {
-//        return bookRepository.findByTitleContaining(title).stream().map(this::convertToDTO).collect(Collectors.toList());
-//    }
-//
-//    public List<BookDTO> searchBooksByAuthor(String author) {
-//        return bookRepository.findByAuthorContaining(author).stream().map(this::convertToDTO).collect(Collectors.toList());
-//    }
-//
-//    private Book convertToEntity(BookDTO bookDTO) {
-//        Book book = new Book();
-//        book.setId(bookDTO.getId());
-//        book.setTitle(bookDTO.getTitle());
-//        book.setAuthor(bookDTO.getAuthor());
-//        book.setCategory(bookDTO.getCategory());
-//        book.setAvailability(bookDTO.getAvailability());
-//        return book;
-//    }
-//
-//    private BookDTO convertToDTO(Book book) {
-//        BookDTO bookDTO = new BookDTO();
-//        bookDTO.setId(book.getId());
-//        bookDTO.setTitle(book.getTitle());
-//        bookDTO.setAuthor(book.getAuthor());
-//        bookDTO.setCategory(book.getCategory());
-//        bookDTO.setAvailability(book.getAvailability());
-//        return bookDTO;
-//    }
+
+    public List<Book> getAllBooks() {
+        return new ArrayList<>(bookRepository.findAll());
+    }
+
+    public Optional<Book> getBook(Long id) {
+        return bookRepository.findById(id);
+    }
+
+    public List<Book> searchBooksByTitle(String title) {
+        return new ArrayList<>(bookRepository.findByTitleContaining(title));
+    }
+
+    public List<Book> searchBooksByAuthor(String author) {
+        return new ArrayList<>(bookRepository.findByAuthorContaining(author));
+    }
+
+    public List<Book> searchBooksByCategory(String category) {
+        return new ArrayList<>(bookRepository.findByCategoryContaining(category));
+    }
+
+    public Book updateBook(Long id, Book updatedBook) {
+        return bookRepository.findById(id).map(book -> {
+            book.setTitle(updatedBook.getTitle());
+            book.setAuthor(updatedBook.getAuthor());
+            book.setCategory(updatedBook.getCategory());
+            book.setAvailability(updatedBook.getAvailability());
+
+            return bookRepository.save(book);
+        }).orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
+    }
+
+    public void deleteBook(Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
+        bookRepository.delete(book);
+    }
 }
