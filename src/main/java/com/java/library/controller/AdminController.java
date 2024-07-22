@@ -1,13 +1,13 @@
 package com.java.library.controller;
 
-import com.java.library.exception.BookNotFoundException;
-import com.java.library.exception.BookUpdateException;
-import com.java.library.exception.UserNotFoundException;
-import com.java.library.exception.UserUpdateException;
+import com.java.library.exception.*;
 import com.java.library.model.Book;
+import com.java.library.model.Loan;
 import com.java.library.model.User;
 import com.java.library.service.BookService;
+import com.java.library.service.LoanService;
 import com.java.library.service.UserService;
+import com.java.library.util.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +18,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
-
     @Autowired
     private BookService bookService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private LoanService loanService;
+    Messages messages = new Messages();
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -32,7 +34,7 @@ public class AdminController {
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(userService.getUser(id).orElseThrow(() -> new BookNotFoundException("User not found with id: " + id)));
+            return ResponseEntity.ok(userService.getUser(id).orElseThrow(() -> new BookNotFoundException(messages.USER_NOT_FOUND() + id)));
         } catch (BookNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -64,7 +66,7 @@ public class AdminController {
     @GetMapping("/books/{id}")
     public ResponseEntity<Book> getBook(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(bookService.getBook(id).orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id)));
+            return ResponseEntity.ok(bookService.getBook(id).orElseThrow(() -> new BookNotFoundException(messages.BOOK_NOT_FOUND() + id)));
         } catch (BookNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -89,6 +91,21 @@ public class AdminController {
             return ResponseEntity.ok().build();
         } catch (BookNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Loan>> getAllLoans() {
+        List<Loan> loans = loanService.getAllLoans();
+        return ResponseEntity.ok(loans);
+    }
+
+    @GetMapping("/loans/{id}")
+    public ResponseEntity<Loan> getLoan(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(loanService.getLoan(id).orElseThrow(() -> new LoanNotFoundException(messages.LOAN_NOT_FOUND() + id)));
+        } catch (BookNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 }

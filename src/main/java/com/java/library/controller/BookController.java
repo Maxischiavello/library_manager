@@ -3,6 +3,7 @@ package com.java.library.controller;
 import com.java.library.model.Book;
 import com.java.library.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +16,9 @@ public class BookController {
     private BookService bookService;
 
     @GetMapping
-    public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
+    public ResponseEntity<List<Book>> getAllBooks() {
+        List<Book> books = bookService.getAllBooks();
+        return ResponseEntity.ok(books);
     }
 
     @GetMapping("/search/title")
