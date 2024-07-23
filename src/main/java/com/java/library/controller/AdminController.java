@@ -104,7 +104,25 @@ public class AdminController {
     public ResponseEntity<Loan> getLoan(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(loanService.getLoan(id).orElseThrow(() -> new LoanNotFoundException(messages.LOAN_NOT_FOUND() + id)));
-        } catch (BookNotFoundException e) {
+        } catch (LoanNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @PostMapping("/loans/approve/{id}")
+    public ResponseEntity<Loan> approveLoan(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(loanService.approveLoan(id));
+        } catch (LoanNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @PostMapping("/loans/reject/{id}")
+    public ResponseEntity<Loan> rejectLoan(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(loanService.rejectLoan(id));
+        } catch (LoanNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }

@@ -1,6 +1,7 @@
 package com.java.library.service;
 
 import com.java.library.exception.BookNotFoundException;
+import com.java.library.exception.LoanNotFoundException;
 import com.java.library.exception.UserNotFoundException;
 import com.java.library.model.Book;
 import com.java.library.model.Loan;
@@ -54,5 +55,21 @@ public class LoanService {
 
     public Optional<Loan> getLoan(Long id) {
         return loanRepository.findById(id);
+    }
+
+    public Loan approveLoan(Long id) {
+        Loan loan = loanRepository.findById(id)
+                .orElseThrow(() -> new LoanNotFoundException(messages.LOAN_NOT_FOUND() + id));
+
+        loan.setStatus(LoanStatus.APPROVED);
+        return loanRepository.save(loan);
+    }
+
+    public Loan rejectLoan(Long id) {
+        Loan loan = loanRepository.findById(id)
+                .orElseThrow(() -> new LoanNotFoundException(messages.LOAN_NOT_FOUND() + id));
+
+        loan.setStatus(LoanStatus.REJECTED);
+        return loanRepository.save(loan);
     }
 }
