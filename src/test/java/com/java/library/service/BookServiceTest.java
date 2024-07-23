@@ -1,10 +1,12 @@
 package com.java.library.service;
 
+import com.java.library.exception.BookNotFoundException;
+import com.java.library.helper.BookTestHelper;
 import com.java.library.repository.BookRepository;
 import com.java.library.model.Book;
-import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,39 +28,22 @@ public class BookServiceTest {
 
     @Test
     void testGetAllBooks() {
-        Book book1 = new Book();
-        book1.setId(1L);
-        book1.setTitle("The Great Gatsby");
-        book1.setAuthor("F. Scott Fitzgerald");
-        book1.setCategory("Classic");
-        book1.setAvailability(true);
-
-        Book book2 = new Book();
-        book2.setId(2L);
-        book2.setTitle("1984");
-        book2.setAuthor("George Orwell");
-        book2.setCategory("Dystopian");
-        book2.setAvailability(true);
-
-        List<Book> mockBooks = Arrays.asList(book1, book2);
+        List<Book> mockBooks = BookTestHelper.createMockBooks();
 
         when(bookRepository.findAll()).thenReturn(mockBooks);
 
         List<Book> result = bookService.getAllBooks();
         assertNotNull(result);
-        assertEquals(2, result.size());
+        assertEquals(3, result.size());
         assertEquals("The Great Gatsby", result.get(0).getTitle());
         assertEquals("1984", result.get(1).getTitle());
+        assertEquals("Great Expectations", result.get(2).getTitle());
     }
 
     @Test
     void testGetBook() {
-        Book book = new Book();
-        book.setId(1L);
-        book.setTitle("The Great Gatsby");
-        book.setAuthor("F. Scott Fitzgerald");
-        book.setCategory("Classic");
-        book.setAvailability(true);
+        List<Book> mockBooks = BookTestHelper.createMockBooks();
+        Book book = mockBooks.get(0);
 
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
@@ -68,5 +53,75 @@ public class BookServiceTest {
         assertEquals("F. Scott Fitzgerald", result.getAuthor());
         assertEquals("Classic", result.getCategory());
         assertEquals(true, result.getAvailability());
+    }
+
+    @Test
+    void testSearchBooksByTitle() {
+        String title = "Great";
+        List<Book> mockBooks = BookTestHelper.createMockBooks();
+
+        when(bookRepository.findByTitleContaining(title)).thenReturn(mockBooks.subList(0, 2));
+
+        List<Book> result = bookService.searchBooksByTitle(title);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("The Great Gatsby", result.get(0).getTitle());
+        assertEquals("1984", result.get(1).getTitle());
+    }
+
+    @Test
+    void testUpdateBook() {
+        Long bookId = 1L;
+        Book existingBook = BookTestHelper.createBook(bookId, "The Great Gatsby", "F. Scott Fitzgerald", "Classic", true);
+        Book updatedBook = BookTestHelper.createBook(bookId, "1984", "George Orwell", "Dystopian", true);
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(existingBook));
+        when(bookRepository.save(existingBook)).thenReturn(updatedBook);
+
+        Book result = bookService.updateBook(bookId, updatedBook);
+
+        assertNotNull(result);
+        assertEquals("1984", result.getTitle());
+        assertEquals("George Orwell", result.getAuthor());
+        assertEquals("Dystopian", result.getCategory());
+        assertEquals(true, result.getAvailability());
+
+        verify(bookRepository).save(existingBook);
+    }
+
+    @Test
+    void testUpdateBookNotFound() {
+        Long bookId = 1L;
+        Book updatedBook = BookTestHelper.createBook(bookId, "1984", "George Orwell", "Dystopian", true);
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.empty());
+
+        assertThrows(BookNotFoundException.class, () -> {
+            bookService.updateBook(bookId, updatedBook);
+        });
+    }
+
+    @Test
+    void testDeleteBook() {
+        Long bookId = 1L;
+        Book existingBook = BookTestHelper.createBook(bookId, "The Great Gatsby", "F. Scott Fitzgerald", "Classic", true);
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(existingBook));
+        doNothing().when(bookRepository).delete(existingBook);
+
+        bookService.deleteBook(bookId);
+
+        verify(bookRepository).delete(existingBook);
+    }
+
+    @Test
+    void testDeleteBookNotFound() {
+        Long bookId = 1L;
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.empty());
+
+        assertThrows(BookNotFoundException.class, () -> {
+            bookService.deleteBook(bookId);
+        });
     }
 }
