@@ -94,7 +94,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/loans")
     public ResponseEntity<List<Loan>> getAllLoans() {
         List<Loan> loans = loanService.getAllLoans();
         return ResponseEntity.ok(loans);
