@@ -44,3 +44,19 @@ application.yml
 .env
 *.key
 *.pem
+
+# Ignore Docker-related files
+compose.yaml
+**/.docker
+**/.dockerignore
+**/.env
+**/docker-compose.override.yml
+**/docker-compose.*.yml
+**/Dockerfile*
+**/target/
+**/build/
+**/out/
+**/logs/
+**/tmp/
+**/.m2/
+**/.mvn/
