@@ -3,6 +3,7 @@ package com.java.library.service;
 import com.java.library.exception.UserNotFoundException;
 import com.java.library.model.User;
 import com.java.library.repository.UserRepository;
+import com.java.library.util.Messages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,7 +16,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private static final String USER_NOT_FOUND = "User not found with id: ";
     private final PasswordEncoder passwordEncoder;
     @Autowired
     private UserRepository userRepository;
@@ -36,11 +36,11 @@ public class UserService {
             user.setRole(updatedUser.getRole());
 
             return userRepository.save(user);
-        }).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND + id));
+        }).orElseThrow(() -> new UserNotFoundException(Messages.USER_NOT_FOUND() + id));
     }
 
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND + id));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(Messages.USER_NOT_FOUND() + id));
         userRepository.delete(user);
     }
 }

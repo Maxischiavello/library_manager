@@ -24,7 +24,6 @@ public class AdminController {
     private UserService userService;
     @Autowired
     private LoanService loanService;
-    Messages messages = new Messages();
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -34,7 +33,7 @@ public class AdminController {
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(userService.getUser(id).orElseThrow(() -> new BookNotFoundException(messages.USER_NOT_FOUND() + id)));
+            return ResponseEntity.ok(userService.getUser(id).orElseThrow(() -> new BookNotFoundException(Messages.USER_NOT_FOUND() + id)));
         } catch (BookNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -66,7 +65,7 @@ public class AdminController {
     @GetMapping("/books/{id}")
     public ResponseEntity<Book> getBook(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(bookService.getBook(id).orElseThrow(() -> new BookNotFoundException(messages.BOOK_NOT_FOUND() + id)));
+            return ResponseEntity.ok(bookService.getBook(id).orElseThrow(() -> new BookNotFoundException(Messages.BOOK_NOT_FOUND() + id)));
         } catch (BookNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -103,7 +102,7 @@ public class AdminController {
     @GetMapping("/loans/{id}")
     public ResponseEntity<Loan> getLoan(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(loanService.getLoan(id).orElseThrow(() -> new LoanNotFoundException(messages.LOAN_NOT_FOUND() + id)));
+            return ResponseEntity.ok(loanService.getLoan(id).orElseThrow(() -> new LoanNotFoundException(Messages.LOAN_NOT_FOUND() + id)));
         } catch (LoanNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }

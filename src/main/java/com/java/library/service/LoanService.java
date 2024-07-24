@@ -30,14 +30,12 @@ public class LoanService {
     @Autowired
     private BookRepository bookRepository;
 
-    private final Messages messages = new Messages();
-
     public Loan requestLoan(Long userId, Long bookId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(messages.USER_NOT_FOUND() + userId));
+                .orElseThrow(() -> new UserNotFoundException(Messages.USER_NOT_FOUND() + userId));
 
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException(messages.BOOK_NOT_FOUND() + bookId));
+                .orElseThrow(() -> new BookNotFoundException(Messages.BOOK_NOT_FOUND() + bookId));
 
         Loan loan = new Loan();
         loan.setUser(user);
@@ -59,7 +57,7 @@ public class LoanService {
 
     public Loan approveLoan(Long id) {
         Loan loan = loanRepository.findById(id)
-                .orElseThrow(() -> new LoanNotFoundException(messages.LOAN_NOT_FOUND() + id));
+                .orElseThrow(() -> new LoanNotFoundException(Messages.LOAN_NOT_FOUND() + id));
 
         loan.setStatus(LoanStatus.APPROVED);
         return loanRepository.save(loan);
@@ -67,7 +65,7 @@ public class LoanService {
 
     public Loan rejectLoan(Long id) {
         Loan loan = loanRepository.findById(id)
-                .orElseThrow(() -> new LoanNotFoundException(messages.LOAN_NOT_FOUND() + id));
+                .orElseThrow(() -> new LoanNotFoundException(Messages.LOAN_NOT_FOUND() + id));
 
         loan.setStatus(LoanStatus.REJECTED);
         return loanRepository.save(loan);

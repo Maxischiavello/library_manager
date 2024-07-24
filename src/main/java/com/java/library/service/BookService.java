@@ -15,7 +15,6 @@ public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
-    private final Messages messages = new Messages();
 
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
@@ -45,11 +44,11 @@ public class BookService {
             book.setAvailability(updatedBook.getAvailability());
 
             return bookRepository.save(book);
-        }).orElseThrow(() -> new BookNotFoundException(messages.BOOK_NOT_FOUND() + id));
+        }).orElseThrow(() -> new BookNotFoundException(Messages.BOOK_NOT_FOUND() + id));
     }
 
     public void deleteBook(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(messages.BOOK_NOT_FOUND() + id));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(Messages.BOOK_NOT_FOUND() + id));
         bookRepository.delete(book);
     }
 }
