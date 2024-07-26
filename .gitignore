@@ -38,6 +38,8 @@ build/
 
 ### Application Properties ###
 application.properties
+application-dev.properties
+application-prod.properties
 application.yml
 
 ### Otros archivos sensibles ###
@@ -45,8 +47,13 @@ application.yml
 *.key
 *.pem
 
+## Temp
+/schema.sql
+
 # Ignore Docker-related files
 compose.yaml
+compose.**.yaml
+docker-compose*
 **/.docker
 **/.dockerignore
 **/.env

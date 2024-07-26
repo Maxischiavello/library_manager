@@ -25,6 +25,7 @@
 **/charts
 **/docker-compose*
 **/compose.y*ml
+**/compose.**.y*aml
 **/Dockerfile*
 **/secrets.dev.yaml
 **/values.dev.yaml
